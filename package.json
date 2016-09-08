@@ -1,5 +1,6 @@
 {
   "main": "index.js",
+  "bin": "./tile-index",
   "scripts": {
     "retire": "retire -p",
     "lint": "eslint *.js test",
@@ -17,7 +18,14 @@
     "retire": "*",
     "tap": "^7.1.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "JSONStream": "^1.1.4",
+    "geojson-stream": "0.0.1",
+    "minimist": "^1.2.0",
+    "through2": "^2.0.1",
+    "tile-cover": "^3.0.1",
+    "tilebelt": "^1.0.1"
+  },
   "name": "tile-index",
   "description": "[![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)",
   "version": "1.0.0",
