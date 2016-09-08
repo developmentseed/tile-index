@@ -1,0 +1,38 @@
+{
+  "main": "index.js",
+  "scripts": {
+    "retire": "retire -p",
+    "lint": "eslint *.js test",
+    "docs-readme": "documentation readme -s API",
+    "docs-check": "documentation readme -s API -c",
+    "test": "npm run retire && npm run lint && npm run docs-check && tap --cov test/*.js",
+    "prepublish": "npm run docs-readme"
+  },
+  "devDependencies": {
+    "documentation": "github:documentationjs/documentation#b1f288dab99ce0826743e0cdc8a6efab21e98967",
+    "eslint": "^3.4.0",
+    "eslint-config-standard": "^6.0.0",
+    "eslint-plugin-promise": "^2.0.1",
+    "eslint-plugin-standard": "^2.0.0",
+    "retire": "*",
+    "tap": "^7.1.0"
+  },
+  "dependencies": {},
+  "name": "tile-index",
+  "description": "[![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)",
+  "version": "1.0.0",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/developmentseed/tile-index.git"
+  },
+  "keywords": [],
+  "author": "Anand Thakker <vestibule@anandthakker.net> (http://anandthakker.net/)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/developmentseed/tile-index/issues"
+  },
+  "homepage": "https://github.com/developmentseed/tile-index#readme"
+}
