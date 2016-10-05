@@ -25,13 +25,13 @@ var argv = require('minimist')(process.argv.slice(2), {
 
 var nextIndex = 0
 var tileToIndex = {}
-var indexToTile = {}
 function indexTile (tile) {
   var key = tile.join('/')
   if (!tileToIndex[key]) {
     var index = nextIndex++
     tileToIndex[key] = index
-    indexToTile[index] = tile
+    result.tiles = result.tiles || {}
+    result.tiles[index] = tile
   }
   return tileToIndex[key]
 }
@@ -75,7 +75,7 @@ process.stdin.pipe(geojsonStream.parse())
     }
   }
 
-  console.log(JSON.stringify(result, null, 2))
+  console.log(JSON.stringify(result))
 
   done()
 }))
