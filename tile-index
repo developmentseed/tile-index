@@ -18,7 +18,7 @@ var argv = require('minimist')(process.argv.slice(2), {
     'z': 14,
     'b': 5,
     'i': 'id',
-    'f': 'coordinates'
+    'f': 'indexed'
   },
   boolean: ['q', 'include-feature']
 })
