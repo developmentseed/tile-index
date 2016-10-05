@@ -1,7 +1,7 @@
 'use strict'
 
 var cover = require('tile-cover')
-var tilebelt = require('tilebelt')
+var format = require('./format')
 
 module.exports = tileIndex
 
@@ -19,22 +19,6 @@ function tileIndex (feature, options) {
     min_zoom: options.maxzoom,
     max_zoom: options.maxzoom
   })
-  .map(function (tile) {
-    switch (options.format) {
-      case 'quadkey': return tilebelt.tileToQuadkey(tile)
-      case 'geojson': return {
-        type: 'Feature',
-        properties: { tile: [tile[2], tile[0], tile[1]].join('/') },
-        geometry: tilebelt.tileToGeoJSON(tile)
-      }
-      default: return [tile[2], tile[0], tile[1]]
-    }
-  })
-
-  if (options.format === 'geojson') {
-    return { type: 'FeatureCollection', features: tiles }
-  } else {
-    return tiles
-  }
+  return format[options.format || 'zxy'](tiles)
 }
 

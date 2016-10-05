@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 var geojsonStream = require('geojson-stream')
-var JSONStream = require('JSONStream')
 var through = require('through2')
 var tileIndex = require('.')
+var format = require('./format')
 
 var argv = require('minimist')(process.argv.slice(2), {
   alias: {
@@ -23,8 +23,6 @@ var argv = require('minimist')(process.argv.slice(2), {
   boolean: ['q', 'include-feature']
 })
 
-var format = argv.f === 'indexed' ? 'coordinates' : argv.f
-
 var nextIndex = 0
 var tileToIndex = {}
 var indexToTile = {}
@@ -38,6 +36,9 @@ function indexTile (tile) {
   return tileToIndex[key]
 }
 
+var result = {}
+var features = {}
+
 process.stdin.pipe(geojsonStream.parse())
 .pipe(through.obj(function (feature, _, next) {
   var id = feature.properties[argv.i]
@@ -45,21 +46,37 @@ process.stdin.pipe(geojsonStream.parse())
     minzoom: argv.Z,
     maxzoom: argv.z,
     buffer: argv.b,
-    format: format
+    format: 'xyz'
+  })
+  .map(function (t) { return t.join('/') })
+  .filter(function (t) {
+    return !result[id] || result[id].every(function (existing) {
+      return existing !== t
+    })
   })
 
-  if (argv.f === 'indexed') {
-    tiles = tiles.map(indexTile)
-  } else if (argv.f === 'geojson' && argv['include-feature']) {
-    tiles.features.push(feature)
+  result[id] = (result[id] || []).concat(tiles)
+  if (argv.f === 'geojson' && argv['include-feature']) {
+    features[id] = (features[id] || []).concat(feature)
   }
 
-  next(null, [id, tiles])
+  next()
 }, function (done) {
-  if (argv.f === 'indexed') {
-    this.push(['tiles', indexToTile])
+  for (let id in result) {
+    result[id] = result[id].map(function (t) { return t.split('/').map(Number) })
+    if (argv.f === 'indexed') {
+      result[id] = format.zxy(result[id]).map(indexTile)
+    } else {
+      result[id] = format[argv.f](result[id])
+    }
+
+    if (argv.f === 'geojson' && features[id]) {
+      result[id].features = result[id].features.concat(features[id])
+    }
   }
+
+  console.log(JSON.stringify(result, null, 2))
+
   done()
 }))
-.pipe(JSONStream.stringifyObject())
-.pipe(process.stdout)
+
